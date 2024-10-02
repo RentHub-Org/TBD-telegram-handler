@@ -28,11 +28,15 @@ bot.telegram.getMe().then((bot_informations) => {
 // Context data includes message info, timestamp, etc; check the official documentation or print ctx.
 bot.command('start', (ctx) => ctx.reply('Welcome to Renthub Bot!\n\nService currently availabe:\n\n Fremium claim✅: /claim <tron_base56_address>\n\nVia Chat Upload⏳: ... will be added soon'));
 bot.command('claim', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b;
     const message = ctx.message;
     if (message && 'text' in message) {
         const address = message.text.split(' ')[1];
-        const username = ((_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.from) === null || _b === void 0 ? void 0 : _b.username) || 'unknown';
+        const username = ((_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.from) === null || _b === void 0 ? void 0 : _b.username) || '';
+        if (address === undefined) {
+            ctx.reply("Please provide a valid address message !!\n Usage: /claim <address>");
+            return;
+        }
         console.log(username, address);
         if (RequestSet_1.default.Check(username)) {
             // first validdate the address
@@ -70,13 +74,6 @@ bot.command('claim', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 if (!newCreditUsage) {
                     throw new Error("Failed to add creditfield for graph.");
                 }
-                //test
-                const credits = yield ((_c = prisma === null || prisma === void 0 ? void 0 : prisma.creditUsage) === null || _c === void 0 ? void 0 : _c.findMany({
-                    where: { userAddr: address },
-                    select: { timestamp: true, credits: true },
-                    orderBy: { timestamp: "asc" }
-                }));
-                console.log(credits);
                 ctx.reply(`3000 credits added to: ${address}\nClaim requested by: @${username}\nReclaim later after 24 hours`);
             }
             catch (e) {

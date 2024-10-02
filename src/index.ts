@@ -22,7 +22,11 @@ bot.command('claim', async (ctx: Context) => {
     const message = ctx.message;
     if (message && 'text' in message) {
         const address = message.text.split(' ')[1];
-        const username = ctx.message?.from?.username || 'unknown';
+        const username = ctx.message?.from?.username || '';
+        if(address === undefined){
+            ctx.reply("Please provide a valid address message !!\n Usage: /claim <address>");
+            return;
+        }
         console.log(username, address);
         if(UserHandler.Check(username)){
             // first validdate the address
