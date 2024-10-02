@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  address       String              @id
+  credits       BigInt              @default(0)
+  rentedFiles   File[]
+  recharges     Bills[]
+  GatewayRoutes GatewayRoutes[]
+  telegramId    TelegramEndPoints[]
+  apiKeys       ApiKeys[]
+  creditUsage   CreditUsage[]
+}
+
+model GatewayRoutes {
+  route           String @unique @default(uuid())
+  createdBy       User   @relation(fields: [createdBy_email], references: [address])
+  createdBy_email String
+}
+
+model File {
+  id              Int      @id @unique @default(autoincrement())
+  hash            String
+  name            String   @default("")
+  sessionId       String
+  size            BigInt
+  expires_in_days Int
+  createdBy       User     @relation(fields: [createdBy_email], references: [address], onDelete: Cascade)
+  createdBy_email String
+  rentralStatusId String
+  updated_on      DateTime
+  created_on      DateTime @default(now())
+  listType        ListType
+}
+
+enum ListType {
+  DEV
+  RENTAL
+}
+
+enum FileType {
+  FILE
+  IMAGE
+  JSON
+  TEXT
+  CUSTOM
+}
+
+model Bills {
+  billId           String   @id @default(uuid())
+  recipient        User     @relation(fields: [createdFor_email], references: [address], onDelete: Cascade)
+  txnHash          String
+  payableAmount    BigInt
+  createdFor_email String
+  credits          BigInt
+  created_on       DateTime @default(now())
+}
+
+model TelegramEndPoints {
+  username   String @unique()
+  owner      User   @relation(fields: [nameHolder], references: [address])
+  nameHolder String
+}
+
+model ApiKeys {
+  key        String @id @default(uuid())
+  tagName    String @unique()
+  owner      User   @relation(fields: [nameHolder], references: [address])
+  nameHolder String
+}
+
+model CreditUsage {
+  id        Int      @id @default(autoincrement())
+  userAddr    String
+  user      User     @relation(fields: [userAddr], references: [address], onDelete: Cascade) 
+  credits   BigInt 
+  timestamp DateTime @default(now())
+}

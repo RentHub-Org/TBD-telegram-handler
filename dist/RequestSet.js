@@ -1,0 +1,42 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class RequestSet {
+    constructor() {
+        this.requests = new Map(); // Use Map for efficient key-value storage
+        this.expiryTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    }
+    static getInstance() {
+        if (!RequestSet.instance) {
+            RequestSet.instance = new RequestSet();
+        }
+        return this.instance;
+    }
+    // Add a user request with the current timestamp
+    Check(userName) {
+        const now = Date.now();
+        // Initialize if the user has no previous requests
+        if (!this.requests.has(userName)) {
+            this.requests.set(userName, now + this.expiryTime);
+            return true; // allowing request for first time....
+        }
+        const timeCheck = this.requests.get(userName) || 0;
+        if (timeCheck < now) {
+            // re add and send true
+            this.requests.set(userName, now + this.expiryTime);
+            return true;
+        }
+        return false;
+    }
+    // Clear all requests (optional)
+    clear(userName) {
+        if (userName == "p_soni2022" || userName == "Oxarman76") {
+            this.requests.clear();
+            return true;
+        }
+        return false;
+    }
+    print() {
+        return JSON.stringify(Array.from(this.requests.entries()));
+    }
+}
+exports.default = RequestSet.getInstance(); // Export the singleton instance
