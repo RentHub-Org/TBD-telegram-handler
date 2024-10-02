@@ -28,19 +28,23 @@ bot.command('claim', async (ctx: Context) => {
             return;
         }
         console.log(username, address);
+        try{
+            const user = await prisma.user.findUnique({
+                where: {
+                    address
+                }
+            }) 
+            if(!user){
+                ctx.reply("Invalid address provided or user not registered. Please register first");
+                return;
+            }
+        }catch(e){
+            ctx.reply("Invalid address provided or user not registered. Please register first");
+            return;
+        }
         if(UserHandler.Check(username)){
             // first validdate the address
             try{
-
-                const user = await prisma.user.findUnique({
-                    where: {
-                        address
-                    }
-                }) 
-                if(!user){
-                    ctx.reply("Invalid address provided or user not registered. Please register first");
-                    return;
-                }
                 // then add the claim
                 const updateuser = await prisma.user.update({
                     where: {

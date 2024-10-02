@@ -38,18 +38,24 @@ bot.command('claim', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         console.log(username, address);
+        try {
+            const user = yield prisma.user.findUnique({
+                where: {
+                    address
+                }
+            });
+            if (!user) {
+                ctx.reply("Invalid address provided or user not registered. Please register first");
+                return;
+            }
+        }
+        catch (e) {
+            ctx.reply("Invalid address provided or user not registered. Please register first");
+            return;
+        }
         if (RequestSet_1.default.Check(username)) {
             // first validdate the address
             try {
-                const user = yield prisma.user.findUnique({
-                    where: {
-                        address
-                    }
-                });
-                if (!user) {
-                    ctx.reply("Invalid address provided or user not registered. Please register first");
-                    return;
-                }
                 // then add the claim
                 const updateuser = yield prisma.user.update({
                     where: {
