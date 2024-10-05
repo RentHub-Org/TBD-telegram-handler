@@ -16,9 +16,23 @@ const telegraf_1 = require("telegraf");
 const dotenv_1 = __importDefault(require("dotenv"));
 const RequestSet_1 = __importDefault(require("./RequestSet"));
 const client_1 = require("@prisma/client");
+const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 const prisma = new client_1.PrismaClient();
 const bot = new telegraf_1.Telegraf(process.env.TELEGRAM_BOT_TOKEN); // Let's instantiate a bot using our token.
+const admins = new Map();
+//code to timeout the request...
+setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+    // do axios request...
+    axios_1.default.get("https://be.renthub.cloud").then((res) => {
+        console.log("Server pinged!");
+    }).catch((e) => {
+        admins.forEach((ctx) => {
+            ctx.reply("Server is down! Please check the server");
+        });
+        console.log("Server ping failed!");
+    });
+}), 1000 * 60 * 10);
 console.log("obt token: ", process.env.TELEGRAM_BOT_TOKEN);
 // We can get bot nickname from bot informations. This is particularly useful for groups.
 bot.telegram.getMe().then((bot_informations) => {
@@ -119,5 +133,24 @@ bot.command('print', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             ctx.reply("internal error");
             break;
     }
+}));
+bot.command('addMe', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const username = (_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.from) === null || _b === void 0 ? void 0 : _b.username;
+    if (!username) {
+        ctx.reply("no useer name found.");
+        return;
+    }
+    if (username == "p_soni2022" || username == "Oxarman76") {
+        if (!admins.has(username)) {
+            admins.set(username, ctx);
+            ctx.reply("Admin added!");
+            return;
+        }
+        ctx.reply("Admin already existed!");
+        return;
+    }
+    ctx.reply("Not authorised......");
+    return;
 }));
 bot.launch();
