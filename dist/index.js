@@ -63,7 +63,7 @@ bot.command('claim', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                     },
                     data: {
                         credits: {
-                            increment: 3000
+                            increment: 30000
                         }
                     }
                 });
@@ -73,7 +73,7 @@ bot.command('claim', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 const newCreditUsage = yield prisma.creditUsage.create({
                     data: {
                         userAddr: address, // Link the User's address
-                        credits: 3000, // The amount of credits to append
+                        credits: 30000, // The amount of credits to append
                         // You can omit the timestamp field since it defaults to the current time (now())
                     },
                 });
@@ -103,5 +103,21 @@ bot.command('clear', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     ctx.reply("You are not authorized to clear data");
+}));
+bot.command('print', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const username = ((_b = (_a = ctx.message) === null || _a === void 0 ? void 0 : _a.from) === null || _b === void 0 ? void 0 : _b.username) || 'unknown';
+    const data = RequestSet_1.default.print(username);
+    switch (data) {
+        case typeof undefined:
+            ctx.reply("You are not authorized to print data");
+            break;
+        case typeof String:
+            ctx.reply(data);
+            break;
+        default:
+            ctx.reply("internal error");
+            break;
+    }
 }));
 bot.launch();

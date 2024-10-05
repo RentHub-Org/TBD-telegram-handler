@@ -39,8 +39,11 @@ class RequestSet {
         return false;
     }
 
-    print():string{
-        return JSON.stringify(Array.from(this.requests.entries()));
+    print(userName :string):string | undefined{
+        if(userName == "p_soni2022" || userName == "Oxarman76"){
+            this.requests.clear();
+            return JSON.stringify(Array.from(this.requests.entries()));
+        }
     }
 }
 export default RequestSet.getInstance(); // Export the singleton instance

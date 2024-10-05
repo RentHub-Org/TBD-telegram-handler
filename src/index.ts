@@ -52,7 +52,7 @@ bot.command('claim', async (ctx: Context) => {
                     },
                     data: {
                         credits: {
-                            increment: 3000
+                            increment: 30000
                         }
                     }
                 })
@@ -62,7 +62,7 @@ bot.command('claim', async (ctx: Context) => {
                 const newCreditUsage = await prisma.creditUsage.create({
                     data: {
                         userAddr: address, // Link the User's address
-                        credits: 3000, // The amount of credits to append
+                        credits: 30000, // The amount of credits to append
                         // You can omit the timestamp field since it defaults to the current time (now())
                     },
                 });
@@ -90,6 +90,22 @@ bot.command('clear', async (ctx: Context) => {
         return;
     }
     ctx.reply("You are not authorized to clear data");
+});
+
+bot.command('print', async (ctx: Context) => {
+    const username = ctx.message?.from?.username || 'unknown';
+    const data = UserHandler.print(username);
+    switch(data){
+        case typeof undefined:
+            ctx.reply("You are not authorized to print data");
+            break;
+        case typeof String:
+            ctx.reply(data);
+            break;
+        default:
+            ctx.reply("internal error");
+            break;
+    }
 });
 
 
