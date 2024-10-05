@@ -12,7 +12,7 @@ const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN as string | "");    // L
 const admins = new Map<String, Context>();
 
 //code to timeout the request...
-setTimeout(async ()=>{
+setInterval(async ()=>{
     // do axios request...
     axios.get("https://be.renthub.cloud").then((res)=>{
         console.log("Server pinged!");
@@ -22,7 +22,7 @@ setTimeout(async ()=>{
         });
         console.log("Server ping failed!");
     });
-},1000 * 60 * 10);
+},1000 * 60 * 10); // 10 minutes
 
 
 console.log("obt token: ", process.env.TELEGRAM_BOT_TOKEN);

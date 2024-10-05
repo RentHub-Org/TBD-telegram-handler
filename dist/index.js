@@ -22,7 +22,7 @@ const prisma = new client_1.PrismaClient();
 const bot = new telegraf_1.Telegraf(process.env.TELEGRAM_BOT_TOKEN); // Let's instantiate a bot using our token.
 const admins = new Map();
 //code to timeout the request...
-setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     // do axios request...
     axios_1.default.get("https://be.renthub.cloud").then((res) => {
         console.log("Server pinged!");
@@ -32,7 +32,7 @@ setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
         });
         console.log("Server ping failed!");
     });
-}), 1000 * 60 * 10);
+}), 1000 * 60 * 10); // 10 minutes
 console.log("obt token: ", process.env.TELEGRAM_BOT_TOKEN);
 // We can get bot nickname from bot informations. This is particularly useful for groups.
 bot.telegram.getMe().then((bot_informations) => {
